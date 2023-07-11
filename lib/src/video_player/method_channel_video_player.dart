@@ -40,14 +40,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'minBufferMs': bufferingConfiguration.minBufferMs,
           'maxBufferMs': bufferingConfiguration.maxBufferMs,
           'bufferForPlaybackMs': bufferingConfiguration.bufferForPlaybackMs,
-          'bufferForPlaybackAfterRebufferMs':
-              bufferingConfiguration.bufferForPlaybackAfterRebufferMs,
+          'bufferForPlaybackAfterRebufferMs': bufferingConfiguration.bufferForPlaybackAfterRebufferMs,
         },
       );
 
-      response = responseLinkedHashMap != null
-          ? Map<String, dynamic>.from(responseLinkedHashMap)
-          : null;
+      response = responseLinkedHashMap != null ? Map<String, dynamic>.from(responseLinkedHashMap) : null;
     }
     return response?['textureId'] as int?;
   }
@@ -57,21 +54,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     Map<String, dynamic>? dataSourceDescription;
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'asset': dataSource.asset,
-          'package': dataSource.package,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName
-        };
+        dataSourceDescription = <String, dynamic>{'key': dataSource.key, 'asset': dataSource.asset, 'package': dataSource.package, 'useCache': false, 'maxCacheSize': 0, 'maxCacheFileSize': 0, 'showNotification': dataSource.showNotification, 'title': dataSource.title, 'author': dataSource.author, 'imageUrl': dataSource.imageUrl, 'notificationChannelName': dataSource.notificationChannelName, 'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds, 'activityName': dataSource.activityName};
         break;
       case DataSourceType.network:
         dataSourceDescription = <String, dynamic>{
@@ -98,21 +81,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         };
         break;
       case DataSourceType.file:
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'uri': dataSource.uri,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey
-        };
+        dataSourceDescription = <String, dynamic>{'key': dataSource.key, 'uri': dataSource.uri, 'useCache': false, 'maxCacheSize': 0, 'maxCacheFileSize': 0, 'showNotification': dataSource.showNotification, 'title': dataSource.title, 'author': dataSource.author, 'imageUrl': dataSource.imageUrl, 'notificationChannelName': dataSource.notificationChannelName, 'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds, 'activityName': dataSource.activityName, 'clearKey': dataSource.clearKey};
         break;
     }
     await _channel.invokeMethod<void>(
@@ -175,8 +144,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setTrackParameters(
-      int? textureId, int? width, int? height, int? bitrate) {
+  Future<void> setTrackParameters(int? textureId, int? width, int? height, int? bitrate) {
     return _channel.invokeMethod<void>(
       'setTrackParameters',
       <String, dynamic>{
@@ -217,14 +185,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         ) ??
         0;
 
+    // Sometimes the media server returns a absolute position far greater than
+    // the datetime instance can handle. This caps the value to the maximum the datetime
+    // can use.
+    if (milliseconds > 8640000000000000 || milliseconds < -8640000000000000) return null;
+
     if (milliseconds <= 0) return null;
 
     return DateTime.fromMillisecondsSinceEpoch(milliseconds);
   }
 
   @override
-  Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
-      double? width, double? height) async {
+  Future<void> enablePictureInPicture(int? textureId, double? top, double? left, double? width, double? height) async {
     return _channel.invokeMethod<void>(
       'enablePictureInPicture',
       <String, dynamic>{
@@ -319,9 +291,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Stream<VideoEvent> videoEventsFor(int? textureId) {
-    return _eventChannelFor(textureId)
-        .receiveBroadcastStream()
-        .map((dynamic event) {
+    return _eventChannelFor(textureId).receiveBroadcastStream().map((dynamic event) {
       late Map<dynamic, dynamic> map;
       if (event is Map) {
         map = event;
