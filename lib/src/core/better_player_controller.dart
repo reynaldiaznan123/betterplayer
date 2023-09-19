@@ -115,6 +115,8 @@ class BetterPlayerController {
   ///Has player been disposed.
   bool _disposed = false;
 
+  bool get disposed => _disposed;
+
   ///Was player playing before automatic pause.
   bool? _wasPlayingBeforePause;
 
